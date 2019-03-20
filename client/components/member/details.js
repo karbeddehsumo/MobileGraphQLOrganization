@@ -4,6 +4,7 @@ import {getMemberQuery} from '../../queries/member';
 
 
 class MemberDetails extends Component {
+
   DisplayMemberDetails(){
     const {member} = this.props.data;
     if(member){
@@ -24,6 +25,7 @@ class MemberDetails extends Component {
       </div>
     );
   }
+
 }
 
 export default graphql(getMemberQuery, {

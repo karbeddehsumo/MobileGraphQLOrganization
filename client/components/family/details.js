@@ -4,6 +4,7 @@ import {getFamilyQuery} from '../../queries/family';
 
 
 class FamilyDetails extends Component {
+
   DisplayFamilyDetails(){
     const {family} = this.props.data;
     if(family){
@@ -25,6 +26,7 @@ class FamilyDetails extends Component {
       </div>
     );
   }
+
 }
 
 export default graphql(getFamilyQuery, {

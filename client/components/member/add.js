@@ -6,6 +6,7 @@ import { getFamiliesQuery } from '../../queries/family';
 
 
 class MemberAdd extends Component {
+
     constructor(props){
         super(props);
         this.state = {
@@ -27,7 +28,7 @@ class MemberAdd extends Component {
           Status: '',
           EnteredBy: '',
           DateEntered: ''
-        }
+        };
     }
 
     submitForm(e){

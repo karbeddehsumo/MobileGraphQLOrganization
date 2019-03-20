@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { graphql, compose } from 'react-apollo';
 import {addFamilyMutation, getFamiliesQuery } from '../../queries/family';
 
+
 class FamilyAdd extends Component {
 
 constructor(props){
@@ -94,6 +95,7 @@ submitForm(e){
       </form>
     );
   }
+
 }
 
 export default compose(

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { graphql, compose } from 'react-apollo';
 import {addOrganizationMutation, getOrganizationsQuery} from '../../queries/organization';
 
+
 class OrganizationAdd extends Component {
 
 constructor(props){
@@ -180,6 +181,7 @@ displayOrganizations(){
       </form>
     );
   }
+
 }
 
 export default compose(

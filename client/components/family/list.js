@@ -4,7 +4,9 @@ import { graphql } from 'react-apollo';
 import {getFamiliesQuery} from '../../queries/family';
 import FamilyDetails  from './details';
 
+
 class FamilyList extends Component {
+
   constructor(props){
     super(props);
     this.state = {
@@ -38,6 +40,7 @@ class FamilyList extends Component {
       </div>
     );
   }
+
 }
 
 FamilyList = graphql(getFamiliesQuery )(FamilyList)

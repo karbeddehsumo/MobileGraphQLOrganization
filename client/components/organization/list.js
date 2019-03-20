@@ -3,7 +3,9 @@ import { graphql, compose } from 'react-apollo';
 import { getOrganizationsQuery, deleteOrganizationMutation } from '../../queries/organization';
 import  OrganizationDetails  from './details';
 
+
 class OrganizationList extends Component {
+
   constructor(props){
     super(props);
     this.state = {
@@ -46,6 +48,7 @@ class OrganizationList extends Component {
       </div>
     );
   }
+
 }
 
 

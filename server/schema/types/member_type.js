@@ -1,8 +1,12 @@
+const OrganizationType = require('./organization_type');
+const FamilyType = require('./family_type');
+
 const graphql = require('graphql');
 const {
   GraphQLObjectType,
   GraphQLString,
-  GraphQLID
+  GraphQLID,
+  GraphQLNonNull
 } = graphql;
 
 const MemberType = new GraphQLObjectType({
@@ -15,7 +19,7 @@ const MemberType = new GraphQLObjectType({
       MiddleName: {type: GraphQLString},
       LastName: {type: new GraphQLNonNull(GraphQLString)},
       Suffix: {type: GraphQLString},
-      DOB: {type: GraphQLString},
+      MemberDOB: {type: GraphQLString},
       Gender: {type: new GraphQLNonNull(GraphQLString)},
       MembershipDate: {type: GraphQLString},
       Title: {type: GraphQLString},
@@ -27,7 +31,7 @@ const MemberType = new GraphQLObjectType({
       Status: {type: GraphQLString},
       EnteredBy: {type: new GraphQLNonNull(GraphQLString)},
       DateEntered: {type: new GraphQLNonNull(GraphQLString)},
-      organization: {
+    /*  organization: {
         type: OrganizationType,
         resolve(parent, args){
           return Organization.findById(parent.id);
@@ -38,7 +42,7 @@ const MemberType = new GraphQLObjectType({
         resolve(parent, args){
           return Family.findById(parent.id);
         }
-      }
+      }*/
     })
 });
 

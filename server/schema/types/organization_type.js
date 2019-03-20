@@ -2,7 +2,8 @@ const graphql = require('graphql');
 const {
   GraphQLObjectType,
   GraphQLString,
-  GraphQLID
+  GraphQLID,
+  GraphQLNonNull
 } = graphql;
 
 const OrganizationType = new GraphQLObjectType({

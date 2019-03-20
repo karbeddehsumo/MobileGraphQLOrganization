@@ -1,5 +1,9 @@
 import React from 'react';
+import AddMember from '../components/member/add'
 
 export default () => {
-  return <div>You are logged in.</div>
+  return <div>You are logged in.
+<AddMember/>
+  </div>
+
 };

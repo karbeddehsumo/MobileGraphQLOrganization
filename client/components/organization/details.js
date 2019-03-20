@@ -4,6 +4,7 @@ import {getOrganizationQuery} from '../../queries/organization';
 
 
 class OrganizationDetails extends Component {
+
   DisplayOrganizationDetails(){
     const {organization} = this.props.data;
     if(organization){
@@ -26,6 +27,7 @@ class OrganizationDetails extends Component {
       </div>
     );
   }
+
 }
 
 export default graphql(getOrganizationQuery, {

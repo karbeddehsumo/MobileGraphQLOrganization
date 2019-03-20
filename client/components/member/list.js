@@ -3,7 +3,9 @@ import { graphql, compose } from 'react-apollo';
 import { getMembersQuery, deleteMemberMutation } from '../../queries/member';
 import  MemberDetails  from './details';
 
+
 class MemberList extends Component {
+
   constructor(props){
     super(props);
     this.state = {
@@ -44,6 +46,7 @@ class MemberList extends Component {
       </div>
     );
   }
+
 }
 
 

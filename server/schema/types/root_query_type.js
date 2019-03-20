@@ -1,9 +1,12 @@
 const graphql = require('graphql');
-const { GraphQLObjectType, GraphQLID } = graphql;
+const { GraphQLObjectType, GraphQLID, GraphQLList } = graphql;
 const UserType = require('./user_type');
-const UserType = require('./organization_type');
-const UserType = require('./member_type');
-const UserType = require('./family_type');
+const OrganizationType = require('./organization_type');
+const MemberType = require('./member_type');
+const FamilyType = require('./family_type');
+const ConstantType = require('./constant_type');
+const CommitteeType = require('./committee_type');
+
 
 const RootQueryType = new GraphQLObjectType({
   name: 'RootQueryType',
@@ -14,6 +17,7 @@ const RootQueryType = new GraphQLObjectType({
         return req.user;
       }
     },
+
     organization: {
          type: OrganizationType,
          args: {id: {type: GraphQLID}},
@@ -27,10 +31,11 @@ const RootQueryType = new GraphQLObjectType({
           return Organization.find({});
         }
       },
+
       member: {
         type: MemberType,
         args: {id: {type: GraphQLID}},
-        rosolve(parent, args){
+        resolve(parent, args){
           return Member.findById(args.id);
         }
       },
@@ -40,8 +45,9 @@ const RootQueryType = new GraphQLObjectType({
           return Member.find({});
         }
       },
+
       family: {
-        type:FamilyType,
+        type: FamilyType,
         args: {id: {type: GraphQLID}},
         resolve(parent, args){
           return Family.findById(args.id);
@@ -52,7 +58,37 @@ const RootQueryType = new GraphQLObjectType({
         resolve(parent, args){
           return Family.find({});
         }
-      }
+      },
+
+    constant: {
+		    type: ConstantType,
+	      args: {id: {type: GraphQLID}},
+        resolve (parent, args){
+			           return Constant.findById(args.id);
+		}
+	},
+
+	constants: {
+    		type:	new GraphQLList(ConstantType),
+		resolve(parent, args){
+			return Constant.find({});
+		}
+	},
+
+  committee: {
+   type: CommitteeType,
+   args: {id: {type: GraphQLID}},
+   resolve (parents, args){
+	returnCommittee.findById(args.id);
+   }
+},
+committees: {
+  type: new GraphQLList(CommitteeType),
+  resolve (parents, args){
+    return Committee.find({});
+}
+},
+
   }
 });
 

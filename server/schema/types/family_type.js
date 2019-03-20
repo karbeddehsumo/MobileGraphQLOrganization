@@ -1,8 +1,12 @@
+const MemberType = require('./member_type');
+
 const graphql = require('graphql');
 const {
   GraphQLObjectType,
   GraphQLString,
-  GraphQLID
+  GraphQLID,
+  GraphQLNonNull,
+  GraphQLList
 } = graphql;
 
 const FamilyType = new GraphQLObjectType({
@@ -18,12 +22,12 @@ const FamilyType = new GraphQLObjectType({
     Status: {type: new GraphQLNonNull(GraphQLString)},
     EnteredBy: {type: new GraphQLNonNull(GraphQLString)},
     DateEntered: {type: new GraphQLNonNull(GraphQLString)},
-    members: {
+    /*members: {
       type: GraphQLList(MemberType),
       resolve(parent, args){
         return Member.find({FamiyID: parent.id});
       }
-    }
+    }*/
   })
 });
 

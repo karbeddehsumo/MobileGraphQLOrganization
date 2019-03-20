@@ -1,10 +1,18 @@
 const graphql = require('graphql');
 const {
   GraphQLObjectType,
-  GraphQLString
+  GraphQLString,
+  GraphQLList,
+  GraphQLNonNull,
+  GraphQLID
 } = graphql;
 const UserType = require('./types/user_type');
 const AuthService = require('../services/auth');
+const MemberType = require('./types/member_type');
+const FamilyType = require('./types/family_type');
+const OrganizationType = require('./types/organization_type');
+const ConstantType = require('./types/constant_type');
+const CommitteeType = require('./types/committee_type');
 
 const mutation = new GraphQLObjectType({
   name: 'Mutation',
@@ -37,7 +45,8 @@ const mutation = new GraphQLObjectType({
         return AuthService.login({ email, password, req });
       }
     },
-    /*======Add Mutations======*/
+    /*======Member Mutations======*/
+
   addMember: {
     type: MemberType,
     args: {
@@ -84,85 +93,6 @@ const mutation = new GraphQLObjectType({
       return member.save();
     }
   },
-  addFamily: {
-    type: FamilyType,
-    args: {
-      FamilyName: {type: new GraphQLNonNull(GraphQLString)},
-      Address: {type: GraphQLString},
-      Address2: {type: GraphQLString},
-      City: {type: new GraphQLNonNull(GraphQLString)},
-      State: {type: GraphQLString},
-      Zip: {type: GraphQLString},
-      Status: {type: new GraphQLNonNull(GraphQLString)},
-      EnteredBy: {type: new GraphQLNonNull(GraphQLString)},
-      DateEntered: {type: new GraphQLNonNull(GraphQLString)}
-    },
-    resolve(parent, args){
-      let family = new Family ({
-        FamilyName: args.FamilyName,
-        Address: args.Address,
-        Address2: args.Address2,
-        City: args.City,
-        State: args.State,
-        Zip: args.Zip,
-        Status: args.Status,
-        EnteredBy: args.EnteredBy,
-        DateEntered: args.DateEntered
-      });
-      return family.save();
-    }
-  },
-  addOrganization: {
-    type: OrganizationType,
-    args: {
-      Name: { type: new GraphQLNonNull(GraphQLString)},
-      Address: {type: GraphQLString},
-      Address2: {type: GraphQLString},
-      City: {type: new GraphQLNonNull(GraphQLString)},
-      State: {type: GraphQLString},
-      Zip: {type: GraphQLString},
-      Country: {type: new GraphQLNonNull(GraphQLString)},
-      PhoneNumber: {type: GraphQLString},
-      Email: {type: new GraphQLNonNull(GraphQLString)},
-      YearFounded: {type: new GraphQLNonNull(GraphQLString)},
-      StoryID: {type: GraphQLID},
-      PictureID: {type: GraphQLID},
-      VideoID: {type: GraphQLID},
-      Description: {type: GraphQLString},
-      Vision: {type: GraphQLString},
-      Mission: {type: GraphQLString},
-      Status: {type: new GraphQLNonNull(GraphQLString)},
-      EnteredBy: {type: new GraphQLNonNull(GraphQLString)},
-      DateEntered: {type: new GraphQLNonNull(GraphQLString)},
-      ParentID: {type: GraphQLID}
-    },
-    resolve(parent, args){
-      let organization = new Organization({
-        Name: args.Name,
-        Address: args.Address,
-        Address2: args.Address2,
-        City: args.City,
-        State: args.State,
-        Zip: args.Zip,
-        Country: args.Country,
-        PhoneNumber: args.PhoneNumber,
-        Email: args.Email,
-        YearFounded: args.YearFounded,
-        StoryID: args.StoryID,
-        PictureID: args.PictureID,
-        VideoID: args.VideoID,
-        Description: args.Description,
-        Vision: args.Vision,
-        Mission: args.Mission,
-        Status: args.Status,
-        EnteredBy: args.EnteredBy,
-        DateEntered: args.DateEntered,
-        ParentID: args.ParentID
-      });
-      return organization.save();
-    }
-  },
-  /*======Update Mutations======*/
   updateMember: {
     type: MemberType,
     args: {
@@ -214,6 +144,51 @@ const mutation = new GraphQLObjectType({
       ).catch( err => Error(err));
     }
   },
+  deleteMember: {
+    type: MemberType,
+    args: {
+      id: { type: GraphQLID }
+    },
+    resolve(parent, args) {
+      const removeMember =  Member.findByIdAndDelete(args.id).exec();
+      if(!removeMember) {
+        throw new Error('Error deleting member')
+      }
+      return removeMember;
+    }
+  },
+
+
+  /*======Family Mutations======*/
+
+  addFamily: {
+    type: FamilyType,
+    args: {
+      FamilyName: {type: new GraphQLNonNull(GraphQLString)},
+      Address: {type: GraphQLString},
+      Address2: {type: GraphQLString},
+      City: {type: new GraphQLNonNull(GraphQLString)},
+      State: {type: GraphQLString},
+      Zip: {type: GraphQLString},
+      Status: {type: new GraphQLNonNull(GraphQLString)},
+      EnteredBy: {type: new GraphQLNonNull(GraphQLString)},
+      DateEntered: {type: new GraphQLNonNull(GraphQLString)}
+    },
+    resolve(parent, args){
+      let family = new Family ({
+        FamilyName: args.FamilyName,
+        Address: args.Address,
+        Address2: args.Address2,
+        City: args.City,
+        State: args.State,
+        Zip: args.Zip,
+        Status: args.Status,
+        EnteredBy: args.EnteredBy,
+        DateEntered: args.DateEntered
+      });
+      return family.save();
+    }
+  },
   updateFamily: {
     type: FamilyType,
     args: {
@@ -246,6 +221,73 @@ const mutation = new GraphQLObjectType({
         },
         {new: true}
       ).catch( err => Error(err));
+    }
+  },
+  deleteFamily: {
+    type: FamilyType,
+    args: {
+      id: {type: GraphQLID }
+    },
+    resolve(parent, args) {
+      const deleteFamily = Family.findByIdAndDelete(args.id).exec();
+      if(!deleteFamily){
+        throw new Error('Error deleting family record')
+      }
+      return deleteFamily;
+    }
+  },
+
+
+  /*======Organization Mutations======*/
+
+  addOrganization: {
+    type: OrganizationType,
+    args: {
+      Name: { type: new GraphQLNonNull(GraphQLString)},
+      Address: {type: GraphQLString},
+      Address2: {type: GraphQLString},
+      City: {type: new GraphQLNonNull(GraphQLString)},
+      State: {type: GraphQLString},
+      Zip: {type: GraphQLString},
+      Country: {type: new GraphQLNonNull(GraphQLString)},
+      PhoneNumber: {type: GraphQLString},
+      Email: {type: new GraphQLNonNull(GraphQLString)},
+      YearFounded: {type: new GraphQLNonNull(GraphQLString)},
+      StoryID: {type: GraphQLID},
+      PictureID: {type: GraphQLID},
+      VideoID: {type: GraphQLID},
+      Description: {type: GraphQLString},
+      Vision: {type: GraphQLString},
+      Mission: {type: GraphQLString},
+      Status: {type: new GraphQLNonNull(GraphQLString)},
+      EnteredBy: {type: new GraphQLNonNull(GraphQLString)},
+      DateEntered: {type: new GraphQLNonNull(GraphQLString)},
+      ParentID: {type: GraphQLID}
+    },
+    resolve(parent, args){
+      let organization = new Organization({
+        Name: args.Name,
+        Address: args.Address,
+        Address2: args.Address2,
+        City: args.City,
+        State: args.State,
+        Zip: args.Zip,
+        Country: args.Country,
+        PhoneNumber: args.PhoneNumber,
+        Email: args.Email,
+        YearFounded: args.YearFounded,
+        StoryID: args.StoryID,
+        PictureID: args.PictureID,
+        VideoID: args.VideoID,
+        Description: args.Description,
+        Vision: args.Vision,
+        Mission: args.Mission,
+        Status: args.Status,
+        EnteredBy: args.EnteredBy,
+        DateEntered: args.DateEntered,
+        ParentID: args.ParentID
+      });
+      return organization.save();
     }
   },
   updateOrganization: {
@@ -282,33 +324,6 @@ const mutation = new GraphQLObjectType({
       ).catch( err => Error(err));
     }
   },
-  /*======Delete Mutations======*/
-  deleteMember: {
-    type: MemberType,
-    args: {
-      id: { type: GraphQLID }
-    },
-    resolve(parent, args) {
-      const removeMember =  Member.findByIdAndDelete(args.id).exec();
-      if(!removeMember) {
-        throw new Error('Error deleting member')
-      }
-      return removeMember;
-    }
-  },
-  deleteFamily: {
-    type: FamilyType,
-    args: {
-      id: {type: GraphQLID }
-    },
-    resolve(parent, args) {
-      const deleteFamily = Family.findByIdAndDelete(args.id).exec();
-      if(!deleteFamily){
-        throw new Error('Error deleting family record')
-      }
-      return deleteFamily;
-    }
-  },
   deleteOrganization: {
     type: OrganizationType,
     args: {
@@ -321,9 +336,239 @@ const mutation = new GraphQLObjectType({
       }
       return deleteOrganization;
     }
-  }
+  },
+/*=======Constant Mutation===========*/
+  addConstant: {
+  		type:  ConstantType,
+  		args: {
+  				OrganizationID: {type: GraphQLID},
+  				Category:	{type: new GraphQLNonNull(GraphQLString)},
+  				ConstantName:	{type: new GraphQLNonNull(GraphQLString)},
+  				Value1:		{type: new GraphQLNonNull(GraphQLString)},
+  				Value2:		{type:  GraphQLString},
+  				Value3:		{type:  GraphQLString},
+  				SortOrder:	{type:  GraphQLString},
+  				Status:		{type: new GraphQLNonNull(GraphQLString)},
+  				EnteredBy:	{type: new GraphQLNonNull(GraphQLString)},
+  				DateEntered:	{type: new GraphQLNonNull(GraphQLString)}
+  		},
+  		resolve(parent, args){
+  			let constant = new Constant ({
+  				OrganizationID: args.OrganizationID,
+  				Category: 	args.Category,
+  				ConstantName: 	args.ConstantName,
+  				Value1:		args.Value1,
+  				Value2: 	args.Value2,
+  				Value3:		args.Value3,
+  				SortOrder:	args.SortOrder,
+  				Status:		args.Status,
+  				EnteredBy:	args.EnteredBy,
+  				DateEntered:	args.DateEntered
+  			});
+  			return constatnt.save();
+  		}
+  	},
+  updateConstant: {
+  		type: ConstantType,
+  		args: {
+  				id: {type: GraphQLID},
+  				OrganizationID: {type: GraphQLID},
+  				Category:	{type: new GraphQLNonNull(GraphQLString)},
+  				ConstantName:	{type: new GraphQLNonNull(GraphQLString)},
+  				Value1:		{type: new GraphQLNonNull(GraphQLString)},
+  				Value2:		{type:  GraphQLString},
+  				Value3:		{type:  GraphQLString},
+  				SortOrder:	{type:  GraphQLString},
+  				Status:		{type: new GraphQLNonNull(GraphQLString)},
+  				EnteredBy:	{type: new GraphQLNonNull(GraphQLString)},
+  				DateEntered:	{type: new GraphQLNonNull(GraphQLString)}
+  		},
+
+  		resolve(parent, args){
+
+  			return Constant.findByIdAndUpdate(
+  				args.id,
+  				{
+  					$set: {
+  						OrganizationID: args.OrganizationID,
+  						Category: 	args.Category,
+  						ConstantName: 	args.ConstantName,
+  						Value1:		args.Value1,
+  						Value2: 	args.Value2,
+  						Value3:		args.Value3,
+  						SortOrder:	args.SortOrder,
+  						Status:		args.Status,
+  						EnteredBy:	args.EnteredBy,
+  						DateEntered:	args.DateEntered
+  					}
+  				},
+  				{new: true}
+  			).catch( err => Error(err));
+  		}
+  	},
+  deleteConstant: {
+  		type: ConstantType,
+  		args: {id: {type: GraphQLID}},
+  		resolve(parent, args){
+  			const deleteConstant = Constant.findByAndDelete(args.id).exec();
+  			if(!deleteConstant){
+  				throw new Error('Error deleting constant')
+  			}
+  		}
+  	},
+
+/*==============Committee Mutation=============*/
+  addCommittee: {
+
+   	type: CommitteeType,
+   	args: {
+		CommitteeName: {type: new GraphQLNonNull(GraphQLString)},
+  		Description: 	{type: new GraphQLNonNull(GraphQLString)},
+  		Contact: 	{type: new GraphQLNonNull(GraphQLString)},
+  		ContactEmail: 	{type: new GraphQLNonNull(GraphQLString)},
+  		PhoneNumber: 	{type: new GraphQLNonNull(GraphQLString)},
+  		BriefDescription: {type: new GraphQLNonNull(GraphQLString)},
+  		PageStyleID: 	{type: new GraphQLNonNull(GraphQLString)},
+  		Status: 	{type: new GraphQLNonNull(GraphQLString)},
+  		CodeDesc: 	{type: new GraphQLNonNull(GraphQLString)},
+  		StoryCreateAccess: 	{type: new GraphQLNonNull(GraphQLString)},
+  		PictureCreateAccess: 	{type: new GraphQLNonNull(GraphQLString)},
+  		VideoCreateAccess: 	{type: new GraphQLNonNull(GraphQLString)},
+  		IsPublic: 		{type: new GraphQLNonNull(GraphQLString)},
+  		DefaultMemberType: 	{type: new GraphQLNonNull(GraphQLString)},
+  		IsGroupCommittee: 	{type: new GraphQLNonNull(GraphQLString)},
+  		PictureID: 		{type: new GraphQLNonNull(GraphQLID)},
+  		MissionStatement: 	{type: new GraphQLNonNull(GraphQLString)},
+  		Title1: 		{type: new GraphQLNonNull(GraphQLString)},
+  		Information1: 		{type: new GraphQLNonNull(GraphQLString)},
+  		Title2: 		{type: new GraphQLNonNull(GraphQLString)},
+  		Information2: 		{type: new GraphQLNonNull(GraphQLString)},
+  		Title3: 		{type: new GraphQLNonNull(GraphQLString)},
+  		Information3: 		{type: new GraphQLNonNull(GraphQLString)},
+  		DisplayBanner: 		{type: new GraphQLNonNull(GraphQLString)},
+  		Vision: 		{type: new GraphQLNonNull(GraphQLString)},
+  		EnteredBy: 		{type: new GraphQLNonNull(GraphQLString)},
+  		DateEntered: 		{type: new GraphQLNonNull(GraphQLString)}
+	},
+	resolve(parent, args){
+		let committee = new Committee ({
+		CommitteeName: args.CommitteeName,
+  		Description: 		args.Description,
+  		Contact: 		args.Contact,
+  		ContactEmail: 		args.ContactEmail,
+  		PhoneNumber: 		args.PhoneNumber,
+  		BriefDescription: 	args.BriefDescription,
+  		PageStyleID: 		args.PageStyleID,
+  		Status: 		args.Status,
+  		CodeDesc: 		args.CodeDesc,
+  		StoryCreateAccess: 	args.StoryCreateAccess,
+  		PictureCreateAccess: 	args.PictureCreateAccess,
+  		VideoCreateAccess: 	args.VideoCreateAccess,
+  		IsPublic: 		args.IsPublic,
+  		DefaultMemberType: 	args.DefaultMemberType,
+  		IsGroupCommittee: 	args.IsGroupCommittee,
+  		PictureID: 		args.PictureID,
+  		MissionStatement: 	args.MissionStatement,
+  		Title1: 		args.Title1,
+  		Information1: 		args.Information1,
+  		Title2: 		args.Title2,
+  		Information2: 		args.Information2,
+  		Title3: 		args.Title3,
+  		Information3: 		args.Information3,
+  		DisplayBanner: 		args.DisplayBanner,
+  		Vision: 		args.Vision,
+  		EnteredBy: 		args.EnteredBy,
+  		DateEntered: 		args.DateEntered
+	});
+	  return committee.save();
+	}
+},
+  updateCommittee: {
+	type: CommitteeType,
+	args: {
+		id: {type: GraphQLID},
+		CommitteeName: {type: new GraphQLNonNull(GraphQLString)},
+  		Description: 	{type: new GraphQLNonNull(GraphQLString)},
+  		Contact: 	{type: new GraphQLNonNull(GraphQLString)},
+  		ContactEmail: 	{type: new GraphQLNonNull(GraphQLString)},
+  		PhoneNumber: 	{type: new GraphQLNonNull(GraphQLString)},
+  		BriefDescription: {type: new GraphQLNonNull(GraphQLString)},
+  		PageStyleID: 	{type: new GraphQLNonNull(GraphQLString)},
+  		Status: 	{type: new GraphQLNonNull(GraphQLString)},
+  		CodeDesc: 	{type: new GraphQLNonNull(GraphQLString)},
+  		StoryCreateAccess: 	{type: new GraphQLNonNull(GraphQLString)},
+  		PictureCreateAccess: 	{type: new GraphQLNonNull(GraphQLString)},
+  		VideoCreateAccess: 	{type: new GraphQLNonNull(GraphQLString)},
+  		IsPublic: 		{type: new GraphQLNonNull(GraphQLString)},
+  		DefaultMemberType: 	{type: new GraphQLNonNull(GraphQLString)},
+  		IsGroupCommittee: 	{type: new GraphQLNonNull(GraphQLString)},
+  		PictureID: 		{type: new GraphQLNonNull(GraphQLID)},
+  		MissionStatement: 	{type: new GraphQLNonNull(GraphQLString)},
+  		Title1: 		{type: new GraphQLNonNull(GraphQLString)},
+  		Information1: 		{type: new GraphQLNonNull(GraphQLString)},
+  		Title2: 		{type: new GraphQLNonNull(GraphQLString)},
+  		Information2: 		{type: new GraphQLNonNull(GraphQLString)},
+  		Title3: 		{type: new GraphQLNonNull(GraphQLString)},
+  		Information3: 		{type: new GraphQLNonNull(GraphQLString)},
+  		DisplayBanner: 		{type: new GraphQLNonNull(GraphQLString)},
+  		Vision: 		{type: new GraphQLNonNull(GraphQLString)},
+  		EnteredBy: 		{type: new GraphQLNonNull(GraphQLString)},
+  		DateEntered: 		{type: new GraphQLNonNull(GraphQLString)}
+	},
+	resolve(parent, args) {
+		return Committee.findByIdAndUpdate(
+			args.id,
+			{
+				$set: {
+					CommitteeName: args.CommitteeName,
+      		Description: 		args.Description,
+      		Contact: 		args.Contact,
+      		ContactEmail: 		args.ContactEmail,
+      		PhoneNumber: 		args.PhoneNumber,
+      		BriefDescription: 	args.BriefDescription,
+      		PageStyleID: 		args.PageStyleID,
+      		Status: 		args.Status,
+      		CodeDesc: 		args.CodeDesc,
+      		StoryCreateAccess: 	args.StoryCreateAccess,
+      		PictureCreateAccess: 	args.PictureCreateAccess,
+      		VideoCreateAccess: 	args.VideoCreateAccess,
+      		IsPublic: 		args.IsPublic,
+      		DefaultMemberType: 	args.DefaultMemberType,
+      		IsGroupCommittee: 	args.IsGroupCommittee,
+      		PictureID: 		args.PictureID,
+      		MissionStatement: 	args.MissionStatement,
+      		Title1: 		args.Title1,
+      		Information1: 		args.Information1,
+      		Title2: 		args.Title2,
+      		Information2: 		args.Information2,
+      		Title3: 		args.Title3,
+      		Information3: 		args.Information3,
+      		DisplayBanner: 		args.DisplayBanner,
+      		Vision: 		args.Vision,
+      		EnteredBy: 		args.EnteredBy,
+      		DateEntered: 		args.DateEntered
+				}
+			},
+		{new: true}
+		).catch( err => Error(err));
+	}
+
+},
+  deleteCommittee: {
+	type: CommitteeType,
+	args: {id: {type: GraphQLID}},
+	resolve(parent, args){
+		const deletCommittee = Committee.findByAndDelete(args.id).exec();
+		if(!deleteCommittee){
+			throw new Error('Error deleting constant')
+		}
+	}
+}
+
+
 
   }
+
 });
 
 module.exports = mutation;
