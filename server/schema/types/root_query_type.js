@@ -6,6 +6,7 @@ const MemberType = require('./member_type');
 const FamilyType = require('./family_type');
 const ConstantType = require('./constant_type');
 const CommitteeType = require('./committee_type');
+const FriendType = require('./friend_type');
 
 
 const RootQueryType = new GraphQLObjectType({
@@ -84,10 +85,26 @@ const RootQueryType = new GraphQLObjectType({
 },
 committees: {
   type: new GraphQLList(CommitteeType),
-  resolve (parents, args){
+  resolve (parent, args){
     return Committee.find({});
 }
 },
+
+friend: {
+		type: FriendType,
+		args: {id: {type: GraphQLID}},
+		resolve (parent, args){
+			return Friend.findById(args.id);
+		}
+	},
+
+	friends: {
+		type: FriendType,
+		resolve (parent, args) {
+			return Friend.find({});
+		}
+	},
+
 
   }
 });

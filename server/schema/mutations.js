@@ -13,6 +13,7 @@ const FamilyType = require('./types/family_type');
 const OrganizationType = require('./types/organization_type');
 const ConstantType = require('./types/constant_type');
 const CommitteeType = require('./types/committee_type');
+const FriendType = require('./types/friend_type');
 
 const mutation = new GraphQLObjectType({
   name: 'Mutation',
@@ -419,7 +420,6 @@ const mutation = new GraphQLObjectType({
 
 /*==============Committee Mutation=============*/
   addCommittee: {
-
    	type: CommitteeType,
    	args: {
 		CommitteeName: {type: new GraphQLNonNull(GraphQLString)},
@@ -563,7 +563,130 @@ const mutation = new GraphQLObjectType({
 			throw new Error('Error deleting constant')
 		}
 	}
-}
+},
+
+/*============Friend Mutation =============*/
+addFriend: {
+	type: FriendType,
+	args: {
+		  	OrganizationID: {type: new GraphQLNonNull(GraphQLString)},
+  	Title: 		{type: new GraphQLNonNull(GraphQLString)},
+  	FirstName: 	{type: new GraphQLNonNull(GraphQLString)},
+  	LastName: 	{type: new GraphQLNonNull(GraphQLString)},
+  	Suffix: 	{type: new GraphQLNonNull(GraphQLString)},
+  	SubCategoryID: 	{type: new GraphQLNonNull(GraphQLString)},
+  	LastEventAttended: {type: new GraphQLNonNull(GraphQLString)},
+  	EventDate: 	{type: new GraphQLNonNull(GraphQLString)},
+  	PhoneNumber: 	{type: new GraphQLNonNull(GraphQLString)},
+  	PhoneProviderID: {type: new GraphQLNonNull(GraphQLString)},
+  	Email: 		{type: new GraphQLNonNull(GraphQLString)},
+  	BestContact: 	{type: new GraphQLNonNull(GraphQLString)},
+  	Address: 	{type: new GraphQLNonNull(GraphQLString)},
+  	Address2: 	{type: new GraphQLNonNull(GraphQLString)},
+  	City: 		{type: new GraphQLNonNull(GraphQLString)},
+  	State: 		{type: new GraphQLNonNull(GraphQLString)},
+  	Zip: 		{type: new GraphQLNonNull(GraphQLString)},
+  	Comment: 	{type: new GraphQLNonNull(GraphQLString)},
+  	Status: 	{type: new GraphQLNonNull(GraphQLString)},
+  	EnteredBy: 	{type: new GraphQLNonNull(GraphQLString)},
+  	DateEntered: 	{type: new GraphQLNonNull(GraphQLString)}
+	},
+	resolve(parent, args){
+		let friend = new Friend ({
+			  OrganizationID: args.OrganizationID,
+  		Title: args.Title,
+  		FirstName: args.FirstName,
+  		LastName: args.LastName,
+  		Suffix: args.Suffix,
+  		SubCategoryID: args.SubCategory,
+  		LastEventAttended: args.LastEventAttended,
+  		EventDate: args.EventDate,
+  		PhoneNumber: args.PhoneNumber,
+  		PhoneProviderID: args.PhoneProviderID,
+  		Email: args.Email,
+  		BestContact: args.BestContact,
+  		Address: args.Address,
+  		Address2: args.Address2,
+  		City: args.City,
+  		State: args.State,
+  		Zip: args.Zip,
+  		Comment: args.Comment,
+  		Status: args.Status,
+  		EnteredBy: args.EnteredBy,
+  		DateEntered: args.DateEntered
+		});
+		return friend.save();
+	}
+},
+updateFriend: {
+	type: FriendType,
+	args: {
+		OrganizationID: {type:  GraphQLString},
+  	Title: 		{type: new GraphQLNonNull(GraphQLString)},
+  	FirstName: 	{type: new GraphQLNonNull(GraphQLString)},
+  	LastName: 	{type: new GraphQLNonNull(GraphQLString)},
+  	Suffix: 	{type: new GraphQLNonNull(GraphQLString)},
+  	SubCategoryID: 	{type: new GraphQLNonNull(GraphQLString)},
+  	LastEventAttended: {type: new GraphQLNonNull(GraphQLString)},
+  	EventDate: 	{type: new GraphQLNonNull(GraphQLString)},
+  	PhoneNumber: 	{type: new GraphQLNonNull(GraphQLString)},
+  	PhoneProviderID: {type: new GraphQLNonNull(GraphQLString)},
+  	Email: 		{type: new GraphQLNonNull(GraphQLString)},
+  	BestContact: 	{type: new GraphQLNonNull(GraphQLString)},
+  	Address: 	{type: new GraphQLNonNull(GraphQLString)},
+  	Address2: 	{type: new GraphQLNonNull(GraphQLString)},
+  	City: 		{type: new GraphQLNonNull(GraphQLString)},
+  	State: 		{type: new GraphQLNonNull(GraphQLString)},
+  	Zip: 		{type: new GraphQLNonNull(GraphQLString)},
+  	Comment: 	{type: new GraphQLNonNull(GraphQLString)},
+  	Status: 	{type: new GraphQLNonNull(GraphQLString)},
+  	EnteredBy: 	{type: new GraphQLNonNull(GraphQLString)},
+  	DateEntered: 	{type: new GraphQLNonNull(GraphQLString)}
+
+	},
+
+	resolve(parent, args) {
+		return Friend.findByIdAndUpdate(
+			args.id,
+			{
+				$set: {
+					OrganizationID: args.OrganizationID,
+  		Title: args.Title,
+  		FirstName: args.FirstName,
+  		LastName: args.LastName,
+  		Suffix: args.Suffix,
+  		SubCategoryID: args.SubCategory,
+  		LastEventAttended: args.LastEventAttended,
+  		EventDate: args.EventDate,
+  		PhoneNumber: args.PhoneNumber,
+  		PhoneProviderID: args.PhoneProviderID,
+  		Email: args.Email,
+  		BestContact: args.BestContact,
+  		Address: args.Address,
+  		Address2: args.Address2,
+  		City: args.City,
+  		State: args.State,
+  		Zip: args.Zip,
+  		Comment: args.Comment,
+  		Status: args.Status,
+  		EnteredBy: args.EnteredBy,
+  		DateEntered: args.DateEntered
+
+		}},
+			{new: true}
+		).catch( err => Error(err));
+	}
+},
+deleteFriend: {
+		type: FriendType,
+		args: {id: {type: GraphQLID}},
+		resolve(parent, args){
+			const deleteFriend = Friend.findByAndDelete(args.id).exec();
+		if(!deleteFriend){
+			throw new Error('Error deleting friend')
+		}
+		}
+	}
 
 
 
