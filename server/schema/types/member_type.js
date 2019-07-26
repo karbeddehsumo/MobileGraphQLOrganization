@@ -19,7 +19,7 @@ const MemberType = new GraphQLObjectType({
       MiddleName: {type: GraphQLString},
       LastName: {type: new GraphQLNonNull(GraphQLString)},
       Suffix: {type: GraphQLString},
-      MemberDOB: {type: GraphQLString},
+      DOB: {type: GraphQLString},
       Gender: {type: new GraphQLNonNull(GraphQLString)},
       MembershipDate: {type: GraphQLString},
       Title: {type: GraphQLString},

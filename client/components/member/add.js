@@ -33,6 +33,8 @@ class MemberAdd extends Component {
 
     submitForm(e){
       e.preventDefault();
+      console.log("I am here.")
+      console.log(this.state);
       this.props.addMemberMutation({
           variables: {
             FamilyID: this.state.FamilyID,
@@ -57,7 +59,7 @@ class MemberAdd extends Component {
           refetchQueries: [{query: getMembersQuery}]
       });
 }
-      displayOrganizations(){
+    displayOrganizations(){
         var data = this.props.getOrganizationsQuery;
         if(data.loading){
           return (<option>Loading organizations...</option>)
@@ -67,11 +69,15 @@ class MemberAdd extends Component {
         })
         }
 }
-        displayFamilies(){
+    displayFamilies(){
+          console.log("what is the props getfamilies");
+          console.log(this.props);
           var data = this.props.getFamiliesQuery;
           if(data.loading){
             return (<option>Loading Families...</option>)
           } else {
+            console.log("where is the families");
+            console.log(data.families);
              return data.families.map(family => {
             return (<option key={family.id} value={family.id}>{family.FamilyName}</option>);
           })
@@ -84,7 +90,7 @@ class MemberAdd extends Component {
             <form id="add-member" onSubmit={this.submitForm.bind(this)}>
 
             <div className="field">
-            <label>Family Name</label>
+            <label>Family Name</label><br/><br/>
             <select onChange={(e) => this.setState({FamilyID: e.target.value})}>
             <option>Select Organization</option>
             {this.displayFamilies()}

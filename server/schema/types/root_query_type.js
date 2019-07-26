@@ -8,12 +8,17 @@ const ConstantType = require('./constant_type');
 const CommitteeType = require('./committee_type');
 const FriendType = require('./friend_type');
 
+const Member = require('../../models/member');
+const Family = require('../../models/family');
+const Organization = require('../../models/organization');
+
 
 const RootQueryType = new GraphQLObjectType({
   name: 'RootQueryType',
   fields: {
     user: {
       type: UserType,
+      args: {id: {type: GraphQLID}},
       resolve(parentValue, args, req) {
         return req.user;
       }
@@ -40,6 +45,7 @@ const RootQueryType = new GraphQLObjectType({
           return Member.findById(args.id);
         }
       },
+
       members: {
         type: new GraphQLList(MemberType),
         resolve(parent, args){
